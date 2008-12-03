@@ -1,5 +1,5 @@
 === Absolute Links ===
-Contributors: Mihai Grigori, ICanLocalize
+Contributors: ICanLocalize
 Tags: CMS, navigation, page, pages, post, posts, links, permlink
 Requires at least: 2.6
 Tested up to: 2.7 (Beta 3)
