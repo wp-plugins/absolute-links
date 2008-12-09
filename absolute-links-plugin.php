@@ -279,8 +279,7 @@ class AbsoluteLinksPlugin{
         delete_post_meta($post_id,'_alp_broken_links');
          
         $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$post_id}");        
-        $int = preg_match_all('#<a(.*)href="('.rtrim(get_option('home'),'/').'/([^"]+?))"([^>]*)>#i',$post->post_content,$alp_matches);        
-                
+        $int = preg_match_all('#<a([^>]*)href="('.rtrim(get_option('home'),'/').'/([^"^>]+))"([^>]*)>#i',$post->post_content,$alp_matches);        
         if($int){   
             $url_parts = parse_url(rtrim(get_option('home'),'/').'/');                                                    
             foreach($alp_matches[3] as $k=>$m){
