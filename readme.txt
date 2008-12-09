@@ -3,7 +3,7 @@ Contributors: ICanLocalize
 Tags: CMS, navigation, page, pages, post, posts, links, permlink
 Requires at least: 2.6
 Tested up to: 2.7 (Beta 3)
-Stable tag: trunk
+Stable tag: 0.2
 
 Prevents dead links between any post or page by guaranteeing that all links always point to the current addresses (permlinks).
 
@@ -14,6 +14,12 @@ When documents that you link to move, change slugs or even when the entire perml
 
 It does so by replacing all internal links to their default link format (e.g. /?p=N or /?page_id=M).
 Then, when rendering, the default links are changed to the current permlink values.
+
+= Supports =
+
+* Posts
+* Pages
+* Categories
 
 = Fixing existing contents =
 
@@ -38,3 +44,7 @@ No. It will only replace correct links to their default link scheme. Broken link
 
 * Version 0.1
 	* First public release.
+* Version 0.2
+	* Improved link replacement.
+	* Improved suggestions for broken links.
+	* Added absolute links for categories.
