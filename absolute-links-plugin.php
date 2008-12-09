@@ -87,7 +87,13 @@ class AbsoluteLinksPlugin{
                         $broken = $k;
                         $repl = $bl['suggestions'][$_POST['sug_id']]['absolute'];
                         unset($broken_links[$k]);
-                        update_post_meta($_POST['post_id'],'_alp_broken_links', $broken_links);
+                        $c = count($broken_links);
+                        if($c){
+                            update_post_meta($_POST['post_id'],'_alp_broken_links', $broken_links);
+                        }else{
+                            delete_post_meta($_POST['post_id'],'_alp_broken_links');
+                        }
+                        echo $c.'|'.$bl['suggestions'][$_POST['sug_id']]['perma'];
                         break;
                     }
                 }
@@ -196,8 +202,9 @@ class AbsoluteLinksPlugin{
                     type: "POST",
                     url: "<?php echo $_SERVER['REQUEST_URI'] ?>",
                     data: "alp_ajx_action=use_suggestion&sug_id="+sug_id+"&post_id="+post_id+"&orig_url="+orig_url,
-                    success: function(msg){                            
-                        jqthis.parent().parent().fadeOut();
+                    success: function(msg){                                                    
+                        spl = msg.split('|');
+                        jqthis.parent().html('<?php echo __('fixed')?> - ' + spl[1]);
                     },
                     error: function (msg){
                         alert('Something went wrong');
@@ -269,12 +276,16 @@ class AbsoluteLinksPlugin{
         
         $rewrite = $wp_rewrite->wp_rewrite_rules();
         
+        delete_post_meta($post_id,'_alp_broken_links');
+         
         $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$post_id}");        
-        $int = preg_match_all('#<a href="('.rtrim(get_option('home'),'/').'/([^"]+?))"[^>]?>#i',$post->post_content,$alp_matches);        
-        
-        if($int){                                                       
-            foreach($alp_matches[2] as $k=>$m){
-                    
+        $int = preg_match_all('#<a(.*)href="('.rtrim(get_option('home'),'/').'/([^"]+?))"([^>]*)>#i',$post->post_content,$alp_matches);        
+                
+        if($int){   
+            $url_parts = parse_url(rtrim(get_option('home'),'/').'/');                                                    
+            foreach($alp_matches[3] as $k=>$m){
+                if(0===strpos($m,'wp-content')) continue;
+                
                 $pathinfo = '';
                 $req_uri = '/' . $m;
                 $req_uri_array = explode('?', $req_uri);
@@ -338,13 +349,16 @@ class AbsoluteLinksPlugin{
                         break;
                     }
                 }                
-                $post_name = false;
+                $post_name = $category_name = false;
                 if(isset($perma_query_vars['pagename'])){
                     $post_name = basename($perma_query_vars['pagename']); 
-                }if(isset($perma_query_vars['name'])){
+                }elseif(isset($perma_query_vars['name'])){
                     $post_name = $perma_query_vars['name']; 
+                }elseif(isset($perma_query_vars['category_name'])){
+                    $category_name = $perma_query_vars['category_name']; 
                 }
-                if($post_name){    
+                
+                if($post_name){                    
                     $name = $wpdb->escape($post_name);
                     $p = $wpdb->get_row("SELECT ID, post_type FROM {$wpdb->posts} WHERE post_name='{$name}' AND post_type IN('post','page')");
                     if($p){
@@ -355,31 +369,49 @@ class AbsoluteLinksPlugin{
                         }
                         
                         $perm_url = rtrim(get_option('home'),'/').'/'.$m;
-                        $regk = '@href="('.$perm_url.')"@i';
-                        $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
+                        $regk = '@href="('.$perm_url.')"@i';                        
                         $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?' . $qvid . '=' . $p->ID.'"';
                         $def_url[$regk] = $regv;
                     }else{
-                        $alp_broken_links[$alp_matches[1][$k]] = array();     
+                        $alp_broken_links[$alp_matches[2][$k]] = array();     
                         $p = $wpdb->get_results("SELECT ID, post_type FROM {$wpdb->posts} WHERE post_name LIKE '{$name}%' AND post_type IN('post','page')");
                         if($p){
                             foreach($p as $post_suggestion){
-                                if($p->post_type=='post'){
+                                if($post_suggestion->post_type=='post'){
                                     $qvid = 'p';
                                 }else{
                                     $qvid = 'page_id';
                                 }
-                                $alp_broken_links[$alp_matches[1][$k]]['suggestions'][] = array(
-                                        'absolute'=>'?' . $qvid . '=' . $post_suggestion->ID,
+                                $alp_broken_links[$alp_matches[2][$k]]['suggestions'][] = array(
+                                        'absolute'=> '/' . ltrim($url_parts['path'],'/') . '?' . $qvid . '=' . $post_suggestion->ID,
                                         'perma'=> '/'. ltrim(str_replace(get_option('home'),'',get_permalink($post_suggestion->ID)),'/')
                                         );
                             }
                         }                        
                     }
+                }elseif($category_name){
+                    $name = $wpdb->escape($category_name);                    
+                    $c = $wpdb->get_row("SELECT term_id FROM {$wpdb->terms} WHERE slug='{$name}'");                    
+                    if($c){
+                        $perm_url = rtrim(get_option('home'),'/').'/'.$m;
+                        $regk = '@href="('.$perm_url.')"@i';
+                        $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
+                        $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?cat_ID=' . $c->term_id.'"';
+                        $def_url[$regk] = $regv;                        
+                    }else{
+                        $alp_broken_links[$alp_matches[2][$k]] = array();     
+                        $c = $wpdb->get_results("SELECT term_id FROM {$wpdb->posts} WHERE slug LIKE '{$name}%'");
+                        if($c){
+                            foreach($c as $cat_suggestion){
+                                $alp_broken_links[$alp_matches[2][$k]]['suggestions'][] = array(
+                                        'absolute'=>'?cat_ID=' . $cat_suggestion->term_id,
+                                        'perma'=> '/'. ltrim(str_replace(get_option('home'),'',get_permalink($cat_suggestion->term_id)),'/')
+                                        );
+                            }
+                        }                        
+                    }                        
                 }
-                                    
             }
-            
             $post_content = $post->post_content;
             
             if($def_url){
@@ -405,13 +437,18 @@ class AbsoluteLinksPlugin{
     }
     
     function show_permalinks($cont){        
-        $cont = preg_replace_callback('#<a([^>]+)?href="(('.rtrim(get_option('home'),'/').')?/?\?(p|page_id)=([0-9]+))"([^>]+)?>#i',
+        $cont = preg_replace_callback('#<a([^>]+)?href="(('.rtrim(get_option('home'),'/').')?/?\?(p|page_id|cat_ID)=([0-9]+))"([^>]+)?>#i',
             array($this,'show_permalinks_cb'),$cont);            
         return $cont;
     }
        
     function show_permalinks_cb($matches){
-        return '<a'.$matches[1]. 'href="'.get_permalink($matches[5]).'"' . $matches[3] . '>';
+        if($matches[4]=='cat_ID'){
+            $_func = 'get_category_link';
+        }else{
+            $_func = 'get_permalink';
+        }        
+        return '<a'.$matches[1]. 'href="'.$_func($matches[5]).'"' . $matches[3] . '>';
     }
     
     function get_broken_links(){

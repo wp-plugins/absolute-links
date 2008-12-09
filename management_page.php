@@ -11,7 +11,7 @@
     
     
     <h3><?php echo __('Broken Links'); ?></h3>
-    <table class="widefat" width="100%" >
+    <table class="widefat" width="100%" border="1">    
     <thead>
     <tr>
         <th scope="col"><?php echo __('Post/page') ?></th>
@@ -33,7 +33,7 @@
         <td>
             <?php if($l['suggestions']): ?>
             <?php foreach($l['suggestions'] as $key=>$sug): ?>
-            <?php echo $sug['perma'] . '<a class="alp_use_sug" id="alp_use_sug_'.$key.'_'.$bl->ID.'_'.$incr.'" href="javascript:;">('.__('use').')</a>' . '<br/>'; ?>
+            <?php echo $sug['perma'] . '<a class="alp_use_sug" id="alp_use_sug_'.$key.'_'.$bl->ID.'_'.$incr.'" href="javascript:;"> ('.__('use').')</a>' . '<br/>'; ?>
             <?php endforeach; ?>
             <?php else: ?>
             <?php echo __('No suggestions'); ?>
