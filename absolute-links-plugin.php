@@ -280,6 +280,7 @@ class AbsoluteLinksPlugin{
          
         $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$post_id}");        
         $int = preg_match_all('#<a([^>]*)href="('.rtrim(get_option('home'),'/').'/([^"^>]+))"([^>]*)>#i',$post->post_content,$alp_matches);        
+        
         if($int){   
             $url_parts = parse_url(rtrim(get_option('home'),'/').'/');                                                    
             foreach($alp_matches[3] as $k=>$m){
@@ -371,7 +372,8 @@ class AbsoluteLinksPlugin{
                         $regk = '@href="('.$perm_url.')"@i';                        
                         $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?' . $qvid . '=' . $p->ID.'"';
                         $def_url[$regk] = $regv;
-                    }else{                        
+                    }else{ 
+                        $alp_broken_links[$alp_matches[2][$k]] = array();                            
                         $p = $wpdb->get_results("SELECT ID, post_type FROM {$wpdb->posts} WHERE post_name LIKE '{$name}%' AND post_type IN('post','page')");
                         if($p){
                             foreach($p as $post_suggestion){
@@ -396,7 +398,8 @@ class AbsoluteLinksPlugin{
                         $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
                         $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?cat_ID=' . $c->term_id.'"';
                         $def_url[$regk] = $regv;                        
-                    }else{                        
+                    }else{
+                        $alp_broken_links[$alp_matches[2][$k]] = array();                             
                         $c = $wpdb->get_results("SELECT term_id FROM {$wpdb->terms} WHERE slug LIKE '{$name}%'");                        
                         if($c){
                             foreach($c as $cat_suggestion){
