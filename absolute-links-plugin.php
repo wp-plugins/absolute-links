@@ -5,7 +5,7 @@ Plugin URI: http://design.icanlocalize.com/wordpress-cms-plugins/absolute-links-
 Description: Doesn't just fix links. Makes sure they can never break. <a href="options-general.php?page=alp">Configure &raquo;</a>.
 Author: ICanLocalize
 Author URI: http://www.icanlocalize.com
-Version: 0.1
+Version: 1.0
 */
 
 /*
