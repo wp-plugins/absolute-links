@@ -3,7 +3,7 @@ Contributors: ICanLocalize
 Tags: CMS, navigation, page, pages, post, posts, links, permlink
 Requires at least: 2.6
 Tested up to: 2.7 (Beta 3)
-Stable tag: 1.0
+Stable tag: 1.1
 
 Prevents dead links between any post or page by guaranteeing that all links always point to the current addresses (permlinks).
 
@@ -48,3 +48,5 @@ No. It will only replace correct links to their default link scheme. Broken link
 	* Improved link replacement.
 	* Improved suggestions for broken links.
 	* Added absolute links for categories.
+* Version 1.1
+    * Supports PHP4, Works correctly if blog is installed in a directory and not in root
