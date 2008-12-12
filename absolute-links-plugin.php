@@ -453,8 +453,12 @@ class AbsoluteLinksPlugin{
         }
     }
     
-    function show_permalinks($cont){        
-        $cont = preg_replace_callback('#<a([^>]+)?href="(('.rtrim(get_option('home'),'/').')?/?\?(p|page_id|cat_ID)=([0-9]+))"([^>]+)?>#i',
+    function show_permalinks($cont){
+        $home = rtrim(get_option('home'),'/');        
+        $parts = parse_url($home);        
+        $abshome = $parts['scheme'] .'://' . $parts['host'];
+        $path = ltrim($parts['path'],'/');    
+        $cont = preg_replace_callback('#<a([^>]+)?href="(('.$abshome.')?/'.$path.'/?\?(p|page_id|cat_ID)=([0-9]+))"([^>]+)?>#i',
             array($this,'show_permalinks_cb'),$cont);            
         return $cont;
     }
