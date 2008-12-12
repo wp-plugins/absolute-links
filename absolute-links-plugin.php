@@ -26,10 +26,12 @@ Version: 1.0
 */
 
 class AbsoluteLinksPlugin{
-    private $settings;
-    private $cur_ver;
+    var $settings;
+    var $cur_ver;
     var $broken_links;
     var $plugin_url = '';
+    
+    
     function __construct(){  
         $this->settings = get_option('alp_settings');
         add_action('admin_menu',array($this,'management_page'));
@@ -45,6 +47,21 @@ class AbsoluteLinksPlugin{
         $this->plugin_url = get_option('siteurl') . '/wp-content/'.$_pl.'/' . basename(dirname(__FILE__));
         
     }
+    
+    function __destruct(){
+        return;
+    }
+    
+    /* MAKE IT PHP 4 COMPATIBLE */
+    function AbsoluteLinksPlugin(){
+     //destructor
+     register_shutdown_function(array(&$this, '__destruct'));
+
+     //constructor
+     $argcv = func_get_args();
+     call_user_func_array(array(&$this, '__construct'), $argcv);
+    }    
+    
     
     function save_settings(){
         $nonce = wp_create_nonce('absolute-links-plugin');
