@@ -5,7 +5,7 @@ Plugin URI: http://sitepress.org/wordpress-cms-plugins/absolute-links-plugin/
 Description: Doesn't just fix links. Makes sure they can never break. <a href="options-general.php?page=alp">Configure &raquo;</a>.
 Author: ICanLocalize
 Author URI: http://www.icanlocalize.com
-Version: 1.1
+Version: 1.1.1
 */
 
 /*

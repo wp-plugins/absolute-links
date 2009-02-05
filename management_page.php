@@ -21,13 +21,13 @@
     </thead>
     
     <?php if($this->broken_links): ?>
-        <?php foreach($this->broken_links as $bl):  $links = unserialize($bl->links); ?>    
+        <?php foreach($this->broken_links as $bl):$links = unserialize($bl->links); if(is_string($links)) $links = unserialize($links); ?>    
         <tr>
             <td rowspan="<?php echo count($links)+1 ?>" valign="top" style="background-color:#eee">
                 <a title="Edit post" href="<?php echo get_edit_post_link($bl->ID) ?>"><?php echo $bl->post_title?></a>
             </td>
         </tr>     
-        <?php foreach($links as $k=>$l): $incr++; ?>
+        <?php if($links) foreach($links as $k=>$l): $incr++; ?>
         <tr>
         <td valign="top" id="alp_bl_<?php echo $incr ?>"><?php echo $k ?></td>       
         <td>
