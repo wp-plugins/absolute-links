@@ -3,7 +3,7 @@ Contributors: ICanLocalize
 Tags: CMS, navigation, page, pages, post, posts, links, permlink, SitePress
 Requires at least: 2.6
 Tested up to: 2.7
-Stable tag: 1.1
+Stable tag: 1.1.1
 
 Prevents dead links between any post or page by guaranteeing that all links always point to the current addresses (permlinks).
 
