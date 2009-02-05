@@ -1,8 +1,8 @@
 === Absolute Links ===
 Contributors: ICanLocalize
-Tags: CMS, navigation, page, pages, post, posts, links, permlink
+Tags: CMS, navigation, page, pages, post, posts, links, permlink, SitePress
 Requires at least: 2.6
-Tested up to: 2.7 (Beta 3)
+Tested up to: 2.7
 Stable tag: 1.1
 
 Prevents dead links between any post or page by guaranteeing that all links always point to the current addresses (permlinks).
@@ -29,6 +29,9 @@ The plugin can scan existing contents (posts and pages). It will automatically c
 
 The plugin lets you return all links to their current permlink structure in the database, so if you choose to deactivate the plugin, things go back to the exact way they were.
 
+= SitePress =
+This plugin is part of [SitePress](http://sitepress.org) - a collection of plugins that turn WordPress into a fully featured multilingual content management system.
+
 == Installation ==
 
 1. Place the folder containing this file into the plugins folder
@@ -50,3 +53,5 @@ No. It will only replace correct links to their default link scheme. Broken link
 	* Added absolute links for categories.
 * Version 1.1
     * Supports PHP4, Works correctly if blog is installed in a directory and not in root
+* Version 1.1.1
+    * Became a part of [SitePress](http://sitepress.org)
